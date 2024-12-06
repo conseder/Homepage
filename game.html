@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rocket Target Game</title>
+    <title>Rocket Game</title>
     <style>
         body {
             margin: 0;
@@ -52,9 +52,13 @@
         let thrustSound;
         let soundSource;
 
+        const rocketSound = new Audio('rocket.mp3');
+        const crashSound = new Audio('crash.mp3');
+        const popSound = new Audio('pop.mp3');
+
         // Load the sound file (thrust-sound.mp3)
         const loadSound = () => {
-            const sound = new Audio('rocket.mp3');
+            const sound = rocketSound;
             sound.loop = false; // We will manage looping in JS
             sound.load();
             sound.volume = 0.1; 
@@ -79,7 +83,7 @@
         }
 
         function playCrashSound(){
-            const sound = new Audio('crash.mp3');
+            const sound = crashSound;
             sound.loop = false; // We will manage looping in JS
             sound.load();
             sound.volume = 0.1; 
@@ -87,7 +91,7 @@
             sound.play();
         }
         function playPopSound(){
-            const sound = new Audio('pop.mp3');
+            const sound = popSound;
             sound.loop = false; // We will manage looping in JS
             sound.load();
             sound.volume = 0.1; 
