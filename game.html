@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Target Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+        }
+
+        canvas {
+            display: block;
+            background: linear-gradient(to top, #3b3b3b, #1a1a1a);
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 10px;
+            /* Always at the top of the screen */
+            width: 20px;
+            height: 20px;
+            background: yellow;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            display: none;
+            /* Initially hidden until needed */
+            pointer-events: none;
+            /* Make sure the arrow does not interact with the user */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="score">Score: 0</div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // Create the audio context and load the sound file
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let thrustSound;
+        let soundSource;
+
+        // Load the sound file (thrust-sound.mp3)
+        const loadSound = () => {
+            const sound = new Audio('rocket.mp3');
+            sound.loop = false; // We will manage looping in JS
+            sound.load();
+            sound.volume = 0.1; 
+            return sound;
+        };
+
+        thrustSound = loadSound();
+
+        // Function to play sound with random starting point
+        function playThrustSound() {
+            if (rocket.thrust > 0) {
+                // If sound is not already playing, start it
+                if (thrustSound.paused || thrustSound.ended) {
+                    thrustSound.currentTime = 5;  // Random start
+                    thrustSound.play();
+                }
+            } else {
+                // Stop the sound when thrust is 0
+                thrustSound.pause();
+                thrustSound.currentTime = 0;  // Reset to the start
+            }
+        }
+
+        function playCrashSound(){
+            const sound = new Audio('crash.mp3');
+            sound.loop = false; // We will manage looping in JS
+            sound.load();
+            sound.volume = 0.1; 
+            thrustSound.currentTime=1;
+            sound.play();
+        }
+        function playPopSound(){
+            const sound = new Audio('pop.mp3');
+            sound.loop = false; // We will manage looping in JS
+            sound.load();
+            sound.volume = 0.1; 
+            thrustSound.currentTime=1;
+            sound.play();
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let rocket = {
+            x: canvas.width / 2,
+            y: canvas.height - 60,
+            width: 30,
+            height: 50,
+            velocityX: 0,
+            velocityY: 0,
+            angle: 0,
+            thrust: 0,
+            crashed: false,
+            grounded: true
+        };
+
+        const gravity = 0.1;
+        const thrustPower = 0.25;
+        const rotateSpeed = 0.05;
+        const crashSpeedThreshold = 3;
+        let targets = [];
+        let score = 0;
+
+        function generateTarget() {
+            const radius = Math.random() * 20 + 10; // Random radius between 10 and 30
+            const color = `hsl(${(radius / 100) * 360}, 100%, 50%)`; // Color depends on size (hue)
+            console.log(radius / 100)
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height / 2,
+                radius,
+                color
+            };
+        }
+
+        function createRandomTargets(count = Math.random() * (8 - 3) + 3) {
+            targets = [];
+            for (let i = 0; i < count; i++) {
+                targets.push(generateTarget());
+            }
+        }
+
+        createRandomTargets();  // Generate targets at the start
+
+        let keys = { ArrowUp: false, ArrowLeft: false, ArrowRight: false };
+
+        window.addEventListener('keydown', (e) => {
+            if (keys.hasOwnProperty(e.key)) keys[e.key] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (keys.hasOwnProperty(e.key)) keys[e.key] = false;
+        });
+
+        function update() {
+            document.getElementById("score").innerHTML = score;
+            if (!rocket.crashed) {
+                if (keys.ArrowUp) {
+                    rocket.thrust = thrustPower;
+                    rocket.velocityY -= rocket.thrust * Math.cos(rocket.angle);
+                    rocket.velocityX += rocket.thrust * Math.sin(rocket.angle);
+                    rocket.grounded = false;
+                    playThrustSound(); // Play thrust sound when thrust is active
+                } else {
+                    rocket.thrust = 0;
+                    playThrustSound(); // Stop the sound when no thrust
+                }
+
+                if (!rocket.grounded) {
+                    rocket.velocityY += gravity;
+
+                    if (keys.ArrowLeft) rocket.angle -= rotateSpeed;
+                    if (keys.ArrowRight) rocket.angle += rotateSpeed;
+
+                    rocket.x += rocket.velocityX;
+                    rocket.y += rocket.velocityY;
+
+                    // Wrap-around horizontal edges
+                    if (rocket.x < 0) rocket.x = canvas.width;
+                    if (rocket.x > canvas.width) rocket.x = 0;
+
+                    // Detect target collisions
+                    for (let i = 0; i < targets.length; i++) {
+                        const target = targets[i];
+                        const dx = rocket.x - target.x;
+                        const dy = rocket.y - target.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < target.radius + rocket.width / 2) {
+                            console.log(target.radius);
+                            playPopSound();
+                            score++;
+                            rocket.velocityX *= target.radius /100;
+                            rocket.velocityY *= target.radius /100;
+                            // if(rocket.velocityX -  target.radius / 100 <=0){
+                            //     rocket.velocityX = 0.2;
+                            // }
+                            // else{
+                            //     rocket.velocityX = rocket.velocityX -  target.radius / 100;
+                            // } // Reduce velocity based on target size
+                            // if(rocket.velocityY -  target.radius / 100 <=0){
+                            //     rocket.velocityY = 0.2;
+                            // }
+                            // else{
+                            //     rocket.velocityY = rocket.velocityY -  target.radius / 100;
+                            // } // Reduce velocity based on target size
+                            rocket.velocityY = rocket.velocityX - target.radius / 20;
+                            targets.splice(i, 1);
+                            targets.push(generateTarget()); // Generate new random target
+                            break;
+                        }
+                    }
+                }
+
+                // Ground collision
+                if (rocket.y + rocket.height > canvas.height) {
+                    if (Math.abs(rocket.velocityY) > crashSpeedThreshold) {
+                        rocket.crashed = true;
+                        resetGame(true);
+                    } else {
+                        rocket.grounded = true;
+                        rocket.velocityY = 0;
+                        rocket.velocityX = 0;
+                        rocket.y = canvas.height - rocket.height;
+                    }
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Track rocket if it moves off the top
+            if (rocket.y < 0) {
+                // Remove any existing arrows before drawing a new one
+                const existingArrows = document.querySelectorAll('.arrow');
+                existingArrows.forEach(arrow => arrow.remove());
+
+                const arrow = document.createElement('div');
+                arrow.classList.add('arrow');
+                arrow.style.left = `${rocket.x - 10}px`; // Place it at the rocket's x position
+                document.body.appendChild(arrow);
+
+                // Make the arrow follow the rocket's x position
+                arrow.style.top = `10px`; // Keep it at the top of the screen
+                arrow.style.display = 'block'; // Ensure it's visible
+            }
+            else {
+                const existingArrows = document.querySelectorAll('.arrow');
+                existingArrows.forEach(arrow => arrow.remove());
+            }
+            // Draw targets
+            for (const target of targets) {
+                ctx.beginPath();
+                ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2);
+                ctx.fillStyle = target.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            // Draw rocket
+            ctx.save();
+            ctx.translate(rocket.x + rocket.width / 2, rocket.y + rocket.height / 2);
+            ctx.rotate(rocket.angle);
+            ctx.fillStyle = rocket.crashed ? 'red' : 'white';
+            ctx.fillRect(-rocket.width / 2, -rocket.height / 2, rocket.width, rocket.height);
+
+            if (rocket.thrust > 0) {
+                ctx.fillStyle = 'orange';
+                ctx.beginPath();
+                ctx.moveTo(-rocket.width / 4, rocket.height / 2);
+                ctx.lineTo(rocket.width / 4, rocket.height / 2);
+                ctx.lineTo(0, rocket.height / 2 + 20);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            ctx.restore();
+
+
+
+
+        }
+        function resetGame(crashed = false) {
+            if (crashed) {
+                score = 0;
+                playCrashSound()
+            }
+            rocket = {
+                x: canvas.width / 2,
+                y: canvas.height - 60,
+                width: 30,
+                height: 50,
+                velocityX: 0,
+                velocityY: 0,
+                angle: 0,
+                thrust: 0,
+                crashed: false,
+                grounded: true
+            };
+            createRandomTargets(); // Create new random targets on restart
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+
+</html>
