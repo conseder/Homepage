@@ -1,23 +1,429 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Screen Iframe</title>
+    <title>Mohammad</title>
     <style>
-        html, body {
+        /* Base Styles */
+        * {
             margin: 0;
             padding: 0;
-            height: 100%;
+            box-sizing: border-box;
         }
-        iframe {
-            border: none;
-            width: 100%;
-            height: 100%;
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f9f9f9;
         }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background: #ff6f61;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ff3e30;
+        }
+
+        /* About Section */
+        section {
+            padding: 50px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2575fc;
+        }
+
+        section p {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Skills Section */
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .skill {
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 200px;
+            transition: transform 0.3s ease;
+        }
+
+        .skill:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #ff6f61;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            section p {
+                font-size: 1rem;
+            }
+
+            .skill {
+                width: 100%;
+            }
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #2575fc;
+        }
+
+        .roadmap {
+            position: relative;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .roadmap::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #6a11cb, #2575fc);
+            z-index: 1;
+            transform: translateX(-50%);
+        }
+
+        .milestone {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        .milestone:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+        #div1 {
+display: flex;
+}
+#about, #education{
+    width: 45% ;
+}
+
+        .milestone .circle {
+            position: relative;
+            z-index: 2;
+            width: 20px;
+            height: 20px;
+            background: #ff6f61;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .milestone .content {
+            position: relative;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            z-index: 2;
+        }
+
+        .milestone:nth-child(odd) .content {
+            margin-right: 20px;
+        }
+
+        .milestone:nth-child(even) .content {
+            margin-left: 20px;
+        }
+
+        .milestone h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #2575fc;
+        }
+
+        .milestone p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+
+            .milestone:nth-child(odd),
+            .milestone:nth-child(even) {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            #div1 {
+            display: block;
+            }
+            #about, #education{
+                width: 100% ;
+            }
+
+            .milestone:nth-child(odd) .content,
+            .milestone:nth-child(even) .content {
+                margin: 0;
+                text-align: left;
+            }
+
+            .roadmap::before {
+                left: 20px;
+                transform: none;
+            }
+
+            .milestone .circle {
+                margin-left: 10px;
+            }
+        }
+
+        section {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        #gasable {
+            background: linear-gradient(90deg, #b6df1c -60%, #0158B9 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+
+        #merch {
+            background: linear-gradient(90deg, #000000 -60%, #bfff01 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+
+        #wise {
+            background: linear-gradient(90deg, #2b4b0f -60%, #573307 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+
+        /* Education Section */
+        .education {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .degree {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            max-width: 800px;
+        }
+
+        .degree .icon {
+            font-size: 3rem;
+            color: #6a11cb;
+        }
+
+        .degree .details {
+            max-width: 700px;
+        }
+
+        .degree h3 {
+            font-size: 1.5rem;
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+
+        .degree p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .education {
+                padding: 15px;
+            }
+
+            .degree {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .degree .icon {
+                margin-bottom: 10px;
+            }
+        }
+
     </style>
 </head>
+
 <body>
-    <iframe src="https://www.example.com" title="Full Screen Iframe"></iframe>
+    <!-- Header Section -->
+    <header>
+        <h1>Mohammad Arabyat</h1>
+        <p>Full-Stack Web Developer | Building modern and scalable web applications</p>
+        <!-- <a href="#about" class="btn">Learn More</a> -->
+    </header>
+    <div id="div1">
+        <!-- About Section -->
+        <section id="about" >
+            <h2>About Me</h2>
+            <p>
+                Hi, I'm Mohammad, a web developer with experience in creating dynamic and responsive websites.
+                I specialize in both front-end and back-end development.
+            </p>
+        </section>
+        <section id="education">
+            <h2>Education</h2>
+            <div class="education">
+                <div class="degree">
+                    <div class="icon">
+                        🎓
+                    </div>
+                    <div class="details">
+                        <h3>Bachelor of Software Engineering </h3>
+                        <p><strong id="wise">Wise University</strong> | 2022 - 2026</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section>
+        <h2>Work Experience</h2>
+        <div class="roadmap">
+            <!-- Milestone 1 -->
+            <div class="milestone">
+                <div class="circle"></div>
+                <div class="content">
+                    <h3>Business Inelegance Developer</h3>
+                    <p><strong id="gasable">Gasable</strong> | 2023 - Present</p>
+                    <p>Developed and maintained custom web portals, integrating Google APIs to enhance client workflows.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Milestone 2 -->
+            <div class="milestone">
+                <div class="circle"></div>
+                <div class="content">
+                    <h3>Business Inelegance Intern</h3>
+                    <p><strong id="gasable">Gasable</strong> | 2022 - 2023</p>
+                    <p>Created PowerBI reports and dashboards, Embedded in custom user filtered web apps</p>
+                </div>
+            </div>
+
+            <!-- Milestone 3 -->
+            <div class="milestone">
+                <div class="circle"></div>
+                <div class="content">
+                    <h3>Freelance</h3>
+                    <!-- <p><strong>Company Name</strong> | 2019 - 2020</p> -->
+                    <p>Designed and implemented dynamic and static websites and forms for <strong id="merch">Merch
+                            Club</strong> and other clients</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2>Skills</h2>
+        <div class="skills">
+            <div class="skill">
+                <h3>HTML & CSS</h3>
+                <p>Crafting beautiful and responsive layouts.</p>
+            </div>
+            <div class="skill">
+                <h3>JavaScript</h3>
+                <p>Interactive and dynamic web applications.</p>
+            </div>
+            <div class="skill">
+                <h3>Python</h3>
+                <p>Back-end logic and API development.</p>
+            </div>
+            <div class="skill">
+                <h3>WordPress</h3>
+                <p>Custom Theme and Plugin Development.</p>
+            </div>
+            <div class="skill">
+                <h3>Google APIs</h3>
+                <p>Streamlining Data with Google API Integrations.</p>
+            </div>
+            <div class="skill">
+                <h3>BigQuery</h3>
+                <p>Efficient Data Warehousing and Query Optimization.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <p> Mohammad Arabyat. <a href="mohammad@alarabyat.com">mohammad@alarabyat.com</a></p>
+    </footer>
 </body>
+
 </html>
