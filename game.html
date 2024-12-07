@@ -26,12 +26,20 @@
             font-size: 20px;
         }
 
+        #fps {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            font-size: 20px;
+        }
+
         .arrow {
             position: absolute;
             top: 10px;
             /* Always at the top of the screen */
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             background: yellow;
             clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             display: none;
@@ -44,6 +52,7 @@
 
 <body>
     <div id="score">Score: 0</div>
+    <div id="fps">Score: 0</div>
     <canvas id="gameCanvas"></canvas>
 
     <script>
@@ -55,13 +64,14 @@
         const rocketSound = new Audio('rocket.mp3');
         const crashSound = new Audio('crash.mp3');
         const popSound = new Audio('pop.mp3');
+        let fps = 0;
 
         // Load the sound file (thrust-sound.mp3)
         const loadSound = () => {
             const sound = rocketSound;
             sound.loop = false; // We will manage looping in JS
             sound.load();
-            sound.volume = 0.1; 
+            sound.volume = 0.1;
             return sound;
         };
 
@@ -82,20 +92,20 @@
             }
         }
 
-        function playCrashSound(){
+        function playCrashSound() {
             const sound = crashSound;
             sound.loop = false; // We will manage looping in JS
             sound.load();
-            sound.volume = 0.1; 
-            thrustSound.currentTime=1;
+            sound.volume = 0.1;
+            thrustSound.currentTime = 1;
             sound.play();
         }
-        function playPopSound(){
+        function playPopSound() {
             const sound = popSound;
             sound.loop = false; // We will manage looping in JS
             sound.load();
-            sound.volume = 0.1; 
-            thrustSound.currentTime=1;
+            sound.volume = 0.1;
+            thrustSound.currentTime = 1;
             sound.play();
         }
 
@@ -127,7 +137,6 @@
         function generateTarget() {
             const radius = Math.random() * 20 + 10; // Random radius between 10 and 30
             const color = `hsl(${(radius / 100) * 360}, 100%, 50%)`; // Color depends on size (hue)
-            console.log(radius / 100)
             return {
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height / 2,
@@ -156,7 +165,7 @@
         });
 
         function update() {
-            document.getElementById("score").innerHTML = score;
+            document.getElementById("score").innerHTML = `Score: ${score}`;
             if (!rocket.crashed) {
                 if (keys.ArrowUp) {
                     rocket.thrust = thrustPower;
@@ -193,8 +202,8 @@
                             console.log(target.radius);
                             playPopSound();
                             score++;
-                            rocket.velocityX *= target.radius /100;
-                            rocket.velocityY *= target.radius /100;
+                            rocket.velocityX *= target.radius / 100;
+                            rocket.velocityY *= target.radius / 100;
                             // if(rocket.velocityX -  target.radius / 100 <=0){
                             //     rocket.velocityX = 0.2;
                             // }
@@ -213,6 +222,7 @@
                             break;
                         }
                     }
+
                 }
 
                 // Ground collision
@@ -228,9 +238,11 @@
                     }
                 }
             }
+            fps += 1;
         }
 
         function draw() {
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Track rocket if it moves off the top
@@ -247,6 +259,7 @@
                 // Make the arrow follow the rocket's x position
                 arrow.style.top = `10px`; // Keep it at the top of the screen
                 arrow.style.display = 'block'; // Ensure it's visible
+                arrow.style.rotate = `${rocket.angle * 50}deg`;
             }
             else {
                 const existingArrows = document.querySelectorAll('.arrow');
@@ -265,20 +278,58 @@
             ctx.save();
             ctx.translate(rocket.x + rocket.width / 2, rocket.y + rocket.height / 2);
             ctx.rotate(rocket.angle);
-            ctx.fillStyle = rocket.crashed ? 'red' : 'white';
-            ctx.fillRect(-rocket.width / 2, -rocket.height / 2, rocket.width, rocket.height);
 
+            // Body of the rocket
+            ctx.fillStyle = rocket.crashed ? 'red' : '#5a8f3c';
+            ctx.beginPath();
+            ctx.moveTo(-rocket.width / 2, rocket.height / 2); // Bottom left
+            ctx.lineTo(rocket.width / 2, rocket.height / 2); // Bottom right
+            ctx.lineTo(rocket.width / 3, -rocket.height / 2); // Top right
+            ctx.lineTo(-rocket.width / 3, -rocket.height / 2); // Top left
+            ctx.closePath();
+            ctx.fill();
+
+            // Nose cone
+            ctx.fillStyle = '#918f3c';
+            ctx.beginPath();
+            ctx.moveTo(-rocket.width / 3, -rocket.height / 2); // Top left of body
+            ctx.lineTo(rocket.width / 3, -rocket.height / 2); // Top right of body
+            ctx.lineTo(0, -rocket.height); // Nose tip
+            ctx.closePath();
+            ctx.fill();
+
+            // Fins
+            ctx.fillStyle = 'gray';
+            // Left fin
+            ctx.beginPath();
+            ctx.moveTo(-rocket.width / 2, rocket.height / 2); // Bottom left of body
+            ctx.lineTo(-rocket.width / 2 - 10, rocket.height / 2 + 20); // Bottom extended left
+            ctx.lineTo(-rocket.width / 4, rocket.height / 2); // Back to body
+            ctx.closePath();
+            ctx.fill();
+
+            // Right fin
+            ctx.beginPath();
+            ctx.moveTo(rocket.width / 2, rocket.height / 2); // Bottom right of body
+            ctx.lineTo(rocket.width / 2 + 10, rocket.height / 2 + 20); // Bottom extended right
+            ctx.lineTo(rocket.width / 4, rocket.height / 2); // Back to body
+            ctx.closePath();
+            ctx.fill();
+
+            // Thruster flame (if thrust is active)
             if (rocket.thrust > 0) {
                 ctx.fillStyle = 'orange';
                 ctx.beginPath();
-                ctx.moveTo(-rocket.width / 4, rocket.height / 2);
-                ctx.lineTo(rocket.width / 4, rocket.height / 2);
-                ctx.lineTo(0, rocket.height / 2 + 20);
+                ctx.moveTo(-rocket.width / 4, rocket.height / 2); // Bottom left of flame
+                ctx.lineTo(rocket.width / 4, rocket.height / 2); // Bottom right of flame
+                ctx.lineTo(0, rocket.height / 2 + 30); // Flame tip
                 ctx.closePath();
                 ctx.fill();
             }
 
             ctx.restore();
+
+
 
 
 
@@ -311,6 +362,10 @@
         }
 
         gameLoop();
+        setInterval(function () {
+            document.getElementById("fps").innerHTML = `FPS ${fps}`;
+            fps = 0;
+        }, 1000);
     </script>
 </body>
 
