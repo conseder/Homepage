@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohammad Arabyat(scroll down to play a game)</title>
+    <title>Mohammad Arabyat</title>
     <style>
         /* Base Styles */
         * {
@@ -20,22 +20,70 @@
             background: #f9f9f9;
         }
 
+        /* Scrollbar styling for WebKit browsers */
+        ::-webkit-scrollbar {
+            width: 12px;
+            /* Width of the scrollbar */
+            height: 12px;
+            /* Height of the scrollbar */
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #ffffff;
+            /* Color of the thumb */
+            border-radius: 6px;
+            /* Round edges */
+            border: 3px solid transparent;
+            /* Padding around thumb */
+            background-clip: content-box;
+            /* Prevent border from overlapping */
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #3d0000;
+            /* Background of the scrollbar track */
+            border-radius: 6px;
+            /* Round edges */
+        }
+
+        html {
+            scrollbar-color: #3d0000 #ffffff;
+            /* thumb color and track color */
+            scrollbar-width: thin;
+            /* Options: auto, thin, none */
+        }
+
+
         a {
             text-decoration: none;
             color: inherit;
         }
 
-        /* Header Section */
         header {
+            position: relative;
             text-align: center;
             padding: 50px 20px;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background: linear-gradient(135deg, #3d0000, #a81f1f);
             color: #fff;
+            overflow: hidden;
+            /* To ensure pseudo-element stays contained */
+        }
+
+
+        header * {
+            position: relative;
+            z-index: 1;
+            /* Ensure content stays on top of the pseudo-element */
         }
 
         header h1 {
             font-size: 3rem;
             margin-bottom: 10px;
+            transition: transform 0.4s ease;
+            cursor: pointer;
+        }
+        header h1:hover {
+            transform:scale(1.1);
         }
 
         header p {
@@ -68,13 +116,14 @@
             font-size: 2rem;
             margin-bottom: 20px;
             text-align: center;
-            color: #2575fc;
+            color: #a81f1f;
         }
 
         section p {
             text-align: center;
             font-size: 1.1rem;
             margin-bottom: 30px;
+            /*! color: ; */
         }
 
         /* Skills Section */
@@ -103,13 +152,13 @@
         footer {
             text-align: center;
             padding: 20px;
-            background: #333;
-            color: #fff;
+            background: #fff;
+            color: #3d0000;
             font-size: 0.9rem;
         }
 
         footer a {
-            color: #ff6f61;
+            color: #a81f1f;
         }
 
         @media (max-width: 768px) {
@@ -146,7 +195,7 @@
             top: 0;
             bottom: 0;
             width: 4px;
-            background: linear-gradient(180deg, #6a11cb, #2575fc);
+            background: linear-gradient(180deg, #3d0000, #3d0000);
             z-index: 1;
             transform: translateX(-50%);
         }
@@ -176,7 +225,7 @@
             z-index: 2;
             width: 20px;
             height: 20px;
-            background: #ff6f61;
+            background: #a81f1f;
             border-radius: 50%;
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
         }
@@ -202,7 +251,7 @@
         .milestone h3 {
             font-size: 1.5rem;
             margin-bottom: 10px;
-            color: #2575fc;
+            color: #3d0000;
         }
 
         .milestone p {
@@ -297,7 +346,7 @@
 
         .degree h3 {
             font-size: 1.5rem;
-            color: #2575fc;
+            color: #3d0000;
             margin-bottom: 10px;
         }
 
@@ -334,7 +383,7 @@
 <body>
     <!-- Header Section -->
     <header>
-        <h1>Mohammad Arabyat</h1>
+        <h1><a href="cv.pdf" target="_blank">Mohammad Arabyat</a></h1>
         <p>Full-Stack Web Developer | Building modern and scalable web applications</p>
         <!-- <a href="#about" class="btn">Learn More</a> -->
     </header>
@@ -431,7 +480,7 @@
 
     </section>
     <div id="gameDiv">
-        <p id="game"> <a href="game.html"  target="_blank">Play a game?</a></p>
+        <p id="game"> <a href="game.html" target="_blank">Play a game?</a></p>
     </div>
 
 
@@ -439,6 +488,21 @@
     <footer>
         <p> Mohammad Arabyat. <a href="mohammad@alarabyat.com">mohammad@alarabyat.com</a></p>
     </footer>
+    <script>
+        window.addEventListener('load', () => {
+            const header = document.querySelector('header');
+            let angle = 135; // Initial gradient angle
+
+            for(let i= 0; i< 90; i++){
+                 // Increment angle in steps (e.g., 45 degrees)
+                
+                setTimeout(() => { angle = (angle + 1) % 360;
+                    header.style.background = `linear-gradient(${angle}deg, #3d0000, #a81f1f)`;
+                 }, i * 30);
+
+            }
+        });
+    </script>
 </body>
 
 </html>
